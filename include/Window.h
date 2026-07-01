@@ -8,9 +8,10 @@ class GLFWwindow;
 class Window {
 public:
     Window();
-    bool windowShouldClose();
+    bool windowShouldClose() const;
     void windowSetShouldClose();
     void update();
+    void clear();
     ~Window();
 
     friend class WindowHandlerProxy;

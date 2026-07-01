@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "Config.h"
 
 Window::Window() {
     glfwInit();
@@ -20,7 +21,7 @@ Window::Window() {
 }
 
 
-bool Window::windowShouldClose() {
+bool Window::windowShouldClose() const {
     return glfwWindowShouldClose(window);
 }
 
@@ -30,11 +31,14 @@ void Window::windowSetShouldClose() {
 
 void Window::update()
 {
-    glClearColor(0.1f, 0.1f, 0.35f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+void Window::clear()
+{
+    glClearColor(MAINCOLOR, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 Window::~Window()

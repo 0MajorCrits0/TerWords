@@ -12,5 +12,9 @@ add_executable( TerWords src/main.cpp
 		src/Window.cpp
 		src/WIndowHandlerProxy.cpp)
 
-target_link_libraries(TerWords PRIVATE glad::glad glfw)
-target_include_directories(TerWords PRIVATE include)
+add_library(RenderSystem STATIC src/RenderSystem/Program.cpp
+				src/RenderSystem/Aggregation.cpp)
+
+target_link_libraries(RenderSystem PUBLIC glad::glad glfw)
+target_link_libraries(TerWords PRIVATE RenderSystem)
+target_include_directories(RenderSystem PUBLIC include)
