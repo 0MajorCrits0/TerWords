@@ -1,6 +1,7 @@
 {
 	"name":"terwords",
 	"version":"1.0.0",
+	"builtin-baseline": "86dc619bd8d9697405ae5c944b474117ea9457ce",
     "dependencies": [
       "glfw3",
       "glad"
