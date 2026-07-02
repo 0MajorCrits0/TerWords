@@ -1,7 +1,5 @@
-#include "RenderSystem/Aggregation.h"
-
 #include <iostream>
-
+#include "RenderSystem/Aggregation.h"
 
 Aggregation::Aggregation(bool compressed)
 {
@@ -48,7 +46,7 @@ void Aggregation::add(const float* data, std::size_t size)
 
     elements.insert(elements.end(), data, data + size);
 
-    std::uint32_t base = 2 * indices.size() / 3; // формула получена проведением прямой через две точки
+    std::uint32_t base = 2 * indices.size() / 3;
     for (std::uint32_t i = 0; i < size / 8; ++i)
     {
         std::uint32_t v = base + i * 4;

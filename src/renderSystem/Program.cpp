@@ -1,9 +1,8 @@
 #include "RenderSystem/Program.h"
 #include "Config.h"
-
 #include <fstream>
 #include <sstream>
-
+#include <iostream>
 #include <glad/glad.h>
 
 std::string readFile(const std::string& path);
@@ -11,14 +10,15 @@ std::string readFile(const std::string& path);
 Program::Program(const std::string& vertexPath, const std::string& fragmentPath)
 {
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-    const char* vertexCode = readFile(SHADERPATH + vertexPath).c_str();
+    std::string v = readFile(SHADER_PATH + vertexPath);
+    const char* vertexCode = v.c_str();
     glShaderSource(vertexShader, 1, &vertexCode, nullptr);
     glCompileShader(vertexShader);
 
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    const char* fragmentCode = readFile(SHADERPATH + fragmentPath).c_str();
+    std::string f = readFile(SHADER_PATH + fragmentPath);
+    const char* fragmentCode = f.c_str();
     glShaderSource(fragmentShader, 1, &fragmentCode, nullptr);
     glCompileShader(fragmentShader);
 
@@ -31,6 +31,8 @@ Program::Program(const std::string& vertexPath, const std::string& fragmentPath)
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    
 }
 
 Program::~Program()
@@ -53,4 +55,22 @@ std::string readFile(const std::string& path)
     buffer << file.rdbuf();
 
     return buffer.str();
+}
+
+void Program::setUniform(std::string name, float value)
+{
+    GLint location = glGetUniformLocation(id, name.c_str());
+    glUniform1f(location, value);
+}
+
+void Program::setUniform(std::string name, vec3 value)
+{
+    GLint location = glGetUniformLocation(id, name.c_str());
+    glUniform3f(location, value.x, value.y, value.z);
+}
+
+void Program::setUniform(std::string name, mat4 value)
+{
+    GLint location = glGetUniformLocation(id, name.c_str());  
+    glUniformMatrix4fv(location, 1, GL_FALSE, &value.m[0][0]);
 }

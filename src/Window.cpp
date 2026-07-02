@@ -2,6 +2,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "Config.h"
+#include "MathObjects.h"
 
 Window::Window() {
     glfwInit();
@@ -11,11 +12,11 @@ Window::Window() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
      
-    GLFWwindow* window = glfwCreateWindow(800, 600, "TerWords", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "TerWords", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, WIDTH, HEIGHT);
 
     this->window = window;
 }

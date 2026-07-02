@@ -10,11 +10,14 @@ find_package(glad CONFIG REQUIRED)
 add_executable( TerWords src/main.cpp
 		src/KeyboardHandler.cpp
 		src/Window.cpp
-		src/WIndowHandlerProxy.cpp)
+		src/WindowHandlerProxy.cpp
+		src/World.cpp)
 
-add_library(RenderSystem STATIC src/RenderSystem/Program.cpp
-				src/RenderSystem/Aggregation.cpp)
+add_library(RenderSystem STATIC src/renderSystem/Program.cpp
+				src/renderSystem/Aggregation.cpp
+				src/renderSystem/WorldRenderer.cpp)
 
 target_link_libraries(RenderSystem PUBLIC glad::glad glfw)
 target_link_libraries(TerWords PRIVATE RenderSystem)
 target_include_directories(RenderSystem PUBLIC include)
+target_compile_definitions(RenderSystem PUBLIC SHADER_PATH="${CMAKE_SOURCE_DIR}/shaders/")

@@ -1,17 +1,32 @@
 #include "WindowHandlerProxy.h"
 #include "Window.h"
 #include "KeyboardHandler.h"
-
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "Config.h"
 
-void WindowHandlerProxy::init(const Window* window, 
-                    const KeyboardHandler* keyboard)
+struct Pocket
 {
-    glfwSetWindowUserPointer(window->window, (void*)keyboard);
+    Window* window;
+    KeyboardHandler* keyboard;
+    WindowHandlerProxy* proxy;
+};
+
+void WindowHandlerProxy::init(Window* window, KeyboardHandler* keyboard)
+{
+
+    Pocket* pocket = new Pocket();
+    pocket->window = window;
+    pocket->keyboard = keyboard;
+    pocket->proxy = this;
+    
+    this->orthoMatrix = ortho((float)WIDTH, (float)HEIGHT);
+
+    glfwSetWindowUserPointer(window->window, (void*)pocket);
     glfwSetKeyCallback(window->window, [](GLFWwindow* window, int key, int, int action, int)
     {
-        auto keyboard = static_cast<KeyboardHandler*>(glfwGetWindowUserPointer(window));
+        auto pocket = static_cast<Pocket*>(glfwGetWindowUserPointer(window));
+        KeyboardHandler* keyboard = pocket->keyboard;
         if (key >= 0 && key < 512)
         {
             if (action == GLFW_PRESS)
@@ -20,4 +35,18 @@ void WindowHandlerProxy::init(const Window* window,
                 keyboard->curr[key] = false;
         }
     });
+
+    glfwSetFramebufferSizeCallback(window->window, [](GLFWwindow* window, int width, int height)
+    {
+        auto pocket = static_cast<Pocket*>(glfwGetWindowUserPointer(window));
+        WindowHandlerProxy* proxy = pocket->proxy;
+
+        proxy->orthoMatrix = ortho((float)width, (float)height);
+        glViewport(0, 0, width, height);
+    });
+}
+
+mat4 WindowHandlerProxy::getOrthoMatrix()
+{
+    return orthoMatrix;
 }

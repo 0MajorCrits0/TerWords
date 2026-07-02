@@ -3,44 +3,11 @@
 #include "KeyboardHandler.h"
 #include "WindowHandlerProxy.h"
 
-#include "RenderSystem/Aggregation.h"
-#include "RenderSystem/Program.h"
+#include "renderSystem/Aggregation.h"
+#include "renderSystem/Program.h"
 
-float vertices[] =
-{
-    // Прямоугольник 1 (центр)
-    -0.3f, -0.15f,
-    -0.3f,  0.15f,
-     0.3f, -0.15f,
-     0.3f,  0.15f,
-
-    // Прямоугольник 2 (слева сверху, меньше)
-    -0.9f,  0.8f,
-    -0.9f,  0.6f,
-    -0.6f,  0.8f,
-    -0.6f,  0.6f,
-};
-
-float vertices1[] =
-{
-    // Прямоугольник 3 (справа снизу, вытянутый)
-     0.4f, -0.4f,
-     0.4f, -0.1f,
-     0.9f, -0.4f,
-     0.9f, -0.1f,
-
-    // Прямоугольник 4 (маленький, ближе к центру)
-    -0.1f,  0.4f,
-    -0.1f,  0.2f,
-     0.1f,  0.4f,
-     0.1f,  0.2f,
-
-    // Прямоугольник 5 (диагонально смещённый)
-    -0.8f, -0.6f,
-    -0.6f, -0.4f,
-    -0.4f, -0.8f,
-    -0.2f, -0.6f
-};
+#include "World.h"
+#include "renderSystem/WorldRenderer.h"
 
 int main(int argc, const char** argv)
 {
@@ -51,9 +18,16 @@ int main(int argc, const char** argv)
 
 	Program program("vert.glsl", "frag.glsl");
 	Aggregation agg(true);
-	agg.add(vertices, sizeof(vertices) / sizeof(float));
-	agg.add(vertices1, sizeof(vertices1) / sizeof(float));
-    
+
+    World world1(16, 4, vec2(0));
+    World world2(20, 5, vec2(1, 0.3));
+    World world3(20, 8, vec2(-1, -0.7));
+
+    WorldRenderer renderer;
+    renderer.generate(world1, agg);
+    renderer.generate(world2, agg);
+    renderer.generate(world3, agg);
+
     while (!window.windowShouldClose())
     {
         if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
@@ -61,9 +35,10 @@ int main(int argc, const char** argv)
 		
 		window.clear();
 		program.use();
+        program.setUniform("orthoMatrix", proxy.getOrthoMatrix());
 		agg.render();
 		window.update();	
     }
-
+    
     return 0;
 }
