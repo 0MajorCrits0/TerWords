@@ -3,12 +3,18 @@
 #include <iostream>
 
 
-Aggregation::Aggregation()
+Aggregation::Aggregation(bool compressed)
 {
+    this->compressed = compressed;
+
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -31,6 +37,7 @@ Aggregation::Aggregation()
 Aggregation::~Aggregation()
 {
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
 }
 
@@ -40,12 +47,27 @@ void Aggregation::add(const float* data, std::size_t size)
         return;
 
     elements.insert(elements.end(), data, data + size);
+
+    std::uint32_t base = 2 * indices.size() / 3; // формула получена проведением прямой через две точки
+    for (std::uint32_t i = 0; i < size / 8; ++i)
+    {
+        std::uint32_t v = base + i * 4;
+
+        indices.push_back(v + 0);
+        indices.push_back(v + 1);
+        indices.push_back(v + 2);
+
+        indices.push_back(v + 1);
+        indices.push_back(v + 2);
+        indices.push_back(v + 3);
+    }
     changed = true;
 }
 
 void Aggregation::clear()
 {
     elements.clear();
+    indices.clear();
     changed = true;
 }
 
@@ -65,10 +87,21 @@ void Aggregation::render()
             elements.data(),
             GL_DYNAMIC_DRAW
         );
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(
+            GL_ELEMENT_ARRAY_BUFFER,
+            indices.size() * sizeof(uint32_t),
+            indices.data(),
+            GL_DYNAMIC_DRAW
+        );
         changed = false;
     }
 
-    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(elements.size()));
+    if (compressed) 
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+    else
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(elements.size()) / 2);
 
     glBindVertexArray(0);
 }

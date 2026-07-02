@@ -7,7 +7,7 @@
 class Aggregation
 {
 public:
-    Aggregation();
+    Aggregation(bool compressed);
     ~Aggregation();
 
     void add(const float* data, std::size_t size);
@@ -16,7 +16,10 @@ public:
 
 private:
     std::vector<float> elements;
+    std::vector<uint32_t> indices;
     bool changed = true;
+    bool compressed = false;
     GLuint VAO = 0;
     GLuint VBO = 0;
+    GLuint EBO = 0;
 };
