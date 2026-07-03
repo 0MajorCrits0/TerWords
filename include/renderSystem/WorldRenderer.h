@@ -1,10 +1,15 @@
 #pragma once
 
+#include <vector>
+
+struct ActiveArea;
+
 class World;
-class Aggregation;
+class SceneGroup;
 
 class WorldRenderer
 {
 public:
-    void generate(const World& world, Aggregation& aggregation);
-};
+    void generate(ActiveArea* area, SceneGroup* scene);
+    void generate(const World& world, SceneGroup* scene);
+};  

@@ -2,3 +2,6 @@ build/
 .vs/
 out/
 .vscode/
+**/*.pdb
+**/*.sln
+**/*.vcproj

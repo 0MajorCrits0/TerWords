@@ -2,7 +2,7 @@
 
 class WindowHandlerProxy;
 
-class KeyboardHandler
+class Keyboard
 {
 public:
     bool isKeyPressedOnce(int key) const;
@@ -10,7 +10,7 @@ public:
     bool isKeyReleased(int key) const;
     void update();
 
-    friend class WindowHandlerProxy;
+    friend class EnvironmentManager;
 private:
     bool prev[512] = {};
     bool curr[512] = {};

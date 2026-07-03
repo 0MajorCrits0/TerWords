@@ -1,44 +1,45 @@
-#include <iostream>
-#include "Window.h"
-#include "KeyboardHandler.h"
-#include "WindowHandlerProxy.h"
-
-#include "renderSystem/Aggregation.h"
-#include "renderSystem/Program.h"
-
-#include "World.h"
-#include "renderSystem/WorldRenderer.h"
+#include "Config.h"
+#include "EnvSystem/Time.h"
+#include "PlayerController.h"
+#include "EnvSystem/Keyboard.h"
+#include "renderSystem/SceneGroup.h"
+#include "WorldSystem/WorldManager.h"
+#include "RenderSystem/RenderManager.h"
+#include "EnvSystem/EnvironmentManager.h"
+#include "WorldFrameData.h"
 
 int main(int argc, const char** argv)
 {
-	Window window;
-	KeyboardHandler keyboard;
-	WindowHandlerProxy proxy;
-	proxy.init(&window, &keyboard);
-
-	Program program("vert.glsl", "frag.glsl");
-	Aggregation agg(true);
-
-    World world1(16, 4, vec2(0));
-    World world2(20, 5, vec2(1, 0.3));
-    World world3(20, 8, vec2(-1, -0.7));
-
-    WorldRenderer renderer;
-    renderer.generate(world1, agg);
-    renderer.generate(world2, agg);
-    renderer.generate(world3, agg);
-
-    while (!window.windowShouldClose())
-    {
-        if (keyboard.isKeyDown(GLFW_KEY_ESCAPE))
-			window.windowSetShouldClose();
-		
-		window.clear();
-		program.use();
-        program.setUniform("orthoMatrix", proxy.getOrthoMatrix());
-		agg.render();
-		window.update();	
-    }
+    Keyboard* keyboard = new Keyboard();
     
+	EnvironmentManager envManager;
+    envManager.init(keyboard);
+
+    WorldManager wldManager;
+    wldManager.init();
+
+    PlayerController player(STARTPOS, 10.0f);
+
+    RenderManager rndManager;
+    rndManager.init();
+
+    Time time;   
+    while (envManager.isWorking())
+    {
+        time.update();
+        player.update(keyboard, time.getDeltaTime());
+		envManager.update();
+
+        WorldFrameData data;
+        wldManager.update(player.getPosition(), &data);
+        rndManager.update(&data, envManager.getOrthoMatrix());
+    }
+
+    envManager.deinit();
+    wldManager.deinit();
+    rndManager.deinit();
+
+    delete keyboard;
+
     return 0;
 }

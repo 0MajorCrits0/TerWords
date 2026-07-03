@@ -3,6 +3,7 @@
 #include <cstddef>
 #include "Config.h"
 #include "MathObjects.h"
+#include <vector>
 
 struct Block
 {
@@ -17,20 +18,27 @@ struct Chunk
 class World
 {
 public:
-    World(std::size_t width, std::size_t height, vec2 position);
+    World(std::size_t width, std::size_t height);
     ~World();
 
-    Chunk* getChunk(std::size_t x, std::size_t y);
+
+    Chunk* getChunk(int x, int y);
     void setChunk(std::size_t x, std::size_t y, Chunk* chunk);
 
     void setBlock(std::size_t x, std::size_t y, const Block& block);
     Block getBlock(std::size_t x, std::size_t y) const;
 
     friend class WorldRenderer;
-private:
+    friend class WorldGenerator;
+    friend class WorldLoader;
+
     std::size_t width;
     std::size_t height;
-    vec2 position;
+    Block** blocks;
+};
 
-    Block** chunks;
+struct WorldInstance
+{
+    World* world;
+    vec2 position;
 };

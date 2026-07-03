@@ -1,7 +1,7 @@
-#include <iostream>
-#include "RenderSystem/Aggregation.h"
+#include "RenderSystem/SceneGroup.h"
+#include "glad/glad.h"
 
-Aggregation::Aggregation(bool compressed)
+SceneGroup::SceneGroup(bool compressed)
 {
     this->compressed = compressed;
 
@@ -32,14 +32,14 @@ Aggregation::Aggregation(bool compressed)
     glBindVertexArray(0);
 }
 
-Aggregation::~Aggregation()
+SceneGroup::~SceneGroup()
 {
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
 }
 
-void Aggregation::add(const float* data, std::size_t size)
+void SceneGroup::add(const float* data, std::size_t size)
 {
     if (!data || size == 0)
         return;
@@ -62,14 +62,14 @@ void Aggregation::add(const float* data, std::size_t size)
     changed = true;
 }
 
-void Aggregation::clear()
+void SceneGroup::clear()
 {
     elements.clear();
     indices.clear();
     changed = true;
 }
 
-void Aggregation::render()
+void SceneGroup::render()
 {
     if (elements.empty())
         return;

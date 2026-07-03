@@ -1,14 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <cstddef>
 #include <glad/glad.h>
 
-class Aggregation
+class SceneGroup
 {
 public:
-    Aggregation(bool compressed);
-    ~Aggregation();
+    SceneGroup(bool compressed);
+    ~SceneGroup();
 
     void add(const float* data, std::size_t size);
     void clear();

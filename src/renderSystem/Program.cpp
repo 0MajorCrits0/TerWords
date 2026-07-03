@@ -1,9 +1,8 @@
 #include "RenderSystem/Program.h"
-#include "Config.h"
+#include <glad/glad.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <glad/glad.h>
 
 std::string readFile(const std::string& path);
 
