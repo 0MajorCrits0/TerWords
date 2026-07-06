@@ -1,6 +1,6 @@
 #pragma once
 
-class Time {
+class EnvTime {
 public:
     void update();
     float getDeltaTime();

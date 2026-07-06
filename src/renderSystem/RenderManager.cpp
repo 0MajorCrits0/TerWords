@@ -1,18 +1,20 @@
 #include "RenderSystem/RenderManager.h"
-#include "RenderSystem/SceneGroup.h"
-#include "RenderSystem/Program.h"
-#include "MathObjects.h"
-#include "RenderSystem/WorldRenderer.h"
-#include "WorldFrameData.h"
+#include "RenderSystem/RenderWorld.h"
+#include "RenderSystem/Rendergroup.h"
+#include "RenderSystem/RenderProgram.h"
+
+#include "PlayerMessage.h"
+#include "WorldsMessage.h"
+#include "World.h"
 
 void RenderManager::init()
 {
-    program = new Program("vert.glsl", "frag.glsl");
-    renderer = new WorldRenderer();
-    scene = new SceneGroup(true);
+    program = new RenderProgram("vert.glsl", "frag.glsl");
+    renderer = new RenderWorld();
+    scene = new RenderGroup(true);
 }
 
-void RenderManager::update(WorldFrameData* data, mat4 ortho)
+void RenderManager::update(WorldsMessage* data, PlayerMessage* player, mat4 ortho)
 {  
 
     glClearColor(0.1f, 0.2f, 0.7f, 1.0f);
@@ -21,11 +23,12 @@ void RenderManager::update(WorldFrameData* data, mat4 ortho)
     program->use();
     program->setUniform("orthoMatrix", ortho);
     
-    for (ActiveArea* area : data->areas)
-        renderer->generate(area, scene);
-    
-    scene->render();
     scene->clear();
+    for (World* world : data->worlds) {
+        renderer->generate(data, player, scene);
+    }
+    scene->render();
+    
 }
 
 void RenderManager::deinit()

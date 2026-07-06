@@ -2,22 +2,26 @@
 
 #include <vector>
 
-struct vec2;
-struct WorldFrameData;
+struct WorldsMessage;
+struct PlayerMessage;
 
 class WorldInstance;
+class WorldDatabase;
 class WorldGenerator;
-class WorldChunkLoader;
+class WorldChunkSelector;
 
 class WorldManager
 {
 public:
-    void init();
-    void update(vec2 cameraPosition, WorldFrameData* scene);
+    void init(WorldsMessage* data);
+    void update(PlayerMessage* player, WorldsMessage* scene);
     void deinit();
 
+    void switchDebugging();
 private:
     std::vector<WorldInstance*> worldInstances;
-    WorldChunkLoader* loader;
+    WorldChunkSelector* selector;
     WorldGenerator* generator;
+    WorldDatabase* db;
+    bool debug;
 };

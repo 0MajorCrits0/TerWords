@@ -1,53 +1,86 @@
 #include "WorldSystem/WorldManager.h"
+#include "WorldSystem/WorldDatabase.h"
+#include "WorldSystem/WorldGenerator.h"
+#include "WorldSystem/WorldChunkSelector.h"
+
+#include "World.h"
+#include "PlayerMessage.h"
 #include "Config.h"
-#include "MathObjects.h"
-#include "WorldSystem/World.h"
-#include "WorldSystem/WorldGenerator.h"
-#include "WorldSystem/WorldGenerator.h"
-#include "WorldSystem/WorldChunkLoader.h"
-#include "WorldFrameData.h"
+#include "WorldsMessage.h"
 
-void WorldManager::init()
+void WorldManager::init(WorldsMessage* worlds)
 {
-    loader = new WorldChunkLoader();
-    generator = new WorldGenerator();
+    this->db = new WorldDatabase(PATHSAVES);
+    this->generator = new WorldGenerator();
+    /*
+    World* world1 = new World();
+    world1->id = 0;
+    world1->width = 8;
+    world1->height = 8;
+    world1->position = vec2(0, -20);
+    world1->velocity = vec2(0, 0);
+    this->db->createWorld(world1);
+    this->generator->generate(world1, db);
+    delete world1;
 
-    World* world = new World(32, 16);
-    WorldInstance* inst = new WorldInstance();
-    inst->position = vec2(7, -16);
-    inst->world = world;
-    worldInstances.push_back(inst);
+    World* world2 = new World();
+    world2->id = 1;
+    world2->width = 8;
+    world2->height = 8;
+    world2->position = vec2(0, 20);
+    world2->velocity = vec2(0, 0);
+    this->db->createWorld(world2);
+    this->generator->generate(world2, db);
+    delete world2;
+    */
+    worlds->worlds = db->readWorlds();
 
-    World* world2 = new World(16, 8);
-    WorldInstance* inst2 = new WorldInstance();
-    inst2->position = vec2(3, 10);
-    inst2->world = world2;
-    worldInstances.push_back(inst2);
+    this->selector = new WorldChunkSelector();
 
-    WorldGenerator generator;
-    generator.generate(world);
-    generator.generate(world2);
+    this->debug = false;
 }
 
-void WorldManager::update(vec2 cameraPosition, WorldFrameData* data)
+void WorldManager::update(PlayerMessage* player, WorldsMessage* worlds)
 {
-    for (WorldInstance* inst : worldInstances)
+    
+    vec2 curPos = player->position;
+    curPos.x = (int)curPos.x - (int)curPos.x % CHUNKSIZE;
+    curPos.y = (int)curPos.y - (int)curPos.y % CHUNKSIZE;
+
+    vec2 oldPos = player->oldPosition;
+    oldPos.x = (int)oldPos.x - (int)oldPos.x % CHUNKSIZE;
+    oldPos.y = (int)oldPos.y - (int)oldPos.y % CHUNKSIZE;
+
+    if (/*curPos != oldPos*/ true) 
     {
-        ActiveArea* visible = loader->getChunks(inst, cameraPosition);
-        data->areas.push_back(visible);
+        for (World* world : worlds->worlds) {
+
+            world->visibleChunksPos.clear();
+            selector->getChunks(world, player); 
+
+            for (auto chunk : worlds->chunks[world])
+                delete chunk;
+            worlds->chunks[world].clear();
+
+            if (debug)  
+                worlds->chunks[world] = db->readAllChunks(world);
+            else
+                worlds->chunks[world] = db->readChunks(world);
+        }
     }
+
+    player->oldPosition = player->position;
+    
 }
 
 void WorldManager::deinit()
 {
-    for (WorldInstance* instance : worldInstances)
-    {
-        World* world = instance->world;
-        delete world;
-        delete instance;
-    }
-    worldInstances.clear();
-
-    delete loader;
+    delete selector;
     delete generator;
+    delete db;
+}
+
+void WorldManager::switchDebugging()
+{
+    debug = !debug;
 }

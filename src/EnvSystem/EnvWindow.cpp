@@ -1,9 +1,10 @@
-#include "EnvSystem/Window.h"
+#include "EnvSystem/EnvWindow.h"
+
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "Config.h"
 
-void Window::init() {
+void EnvWindow::init() {
     glfwInit();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -20,27 +21,27 @@ void Window::init() {
 }
 
 
-bool Window::windowShouldClose() const {
+bool EnvWindow::windowShouldClose() const {
     return glfwWindowShouldClose(frame);
 }
 
-void Window::windowSetShouldClose() {
+void EnvWindow::windowSetShouldClose() {
     return glfwSetWindowShouldClose(frame, true);
 }
 
-void Window::update()
+void EnvWindow::update()
 {
     glfwSwapBuffers(frame);
     glfwPollEvents();
 }
 
-void Window::clear()
+void EnvWindow::clear()
 {
     glClearColor(MAINCOLOR, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Window::deinit()
+void EnvWindow::deinit()
 {
     glfwDestroyWindow(frame);
     glfwTerminate();

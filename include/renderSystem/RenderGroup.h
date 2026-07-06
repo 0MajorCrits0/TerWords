@@ -1,13 +1,14 @@
 #pragma once
 
-#include <vector>
-#include <glad/glad.h>
+#include "glad/glad.h"
 
-class SceneGroup
+#include <vector>
+
+class RenderGroup
 {
 public:
-    SceneGroup(bool compressed);
-    ~SceneGroup();
+    RenderGroup(bool compressed);
+    ~RenderGroup();
 
     void add(const float* data, std::size_t size);
     void clear();

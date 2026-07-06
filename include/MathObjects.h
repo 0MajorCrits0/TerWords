@@ -82,19 +82,33 @@ inline mat4 ortho(float width, float height)
     return m;
 }
 
+inline float length(vec3 vec)
+{
+    return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
+
+inline float length(vec2 vec)
+{
+    return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
 inline vec3 normalize(vec3 vec)
 {
-    float length = sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-    vec.x /= length;
-    vec.y /= length;
-    vec.z /= length;
-    return vec;
+    return vec / length(vec);
 }
 
 inline vec2 normalize(vec2 vec)
 {
-    float length = std::sqrt(vec.x * vec.x + vec.y * vec.y);
-    vec.x /= length;
-    vec.y /= length;
-    return vec;
+    return vec / length(vec);
 }
+
+inline float min(float a, float b)
+{
+    return a > b ? b : a;
+}
+
+inline float max(float a, float b)
+{
+    return a > b ? a : b;
+}
+

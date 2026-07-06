@@ -1,17 +1,19 @@
 #pragma once
 
-#include <memory>
 #include "MathObjects.h"
+
+#include <memory>
 
 struct Pocket;
 
-class Window;
-class Keyboard;
+class EnvWindow;
+class EnvKeyboard;
+class InputMessage;
 
-class EnvironmentManager
+class EnvManager
 {
 public:
-    void init(Keyboard* keyboard);
+    void init(InputMessage* input);
     void update();
     void deinit();
 
@@ -19,11 +21,12 @@ public:
     bool isWorking();
 private:
     Pocket* pocket;
+    EnvKeyboard* keyboard;
 };
 
 struct Pocket
 {
-    Window* window;
-    Keyboard* keyboard;
+    EnvWindow* window;
+    InputMessage* input;
     mat4 orthoMatrix;
 };

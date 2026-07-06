@@ -1,22 +1,24 @@
 #pragma once
 
-#include <vector>
 #include "MathObjects.h"
 
-class Program;
-class SceneGroup;
-class WorldRenderer;
-class WorldFrameData;
+#include <vector>
+
+class RenderGroup;
+class RenderWorld;
+class PlayerMessage;
+class WorldsMessage;
+class RenderProgram;
 
 class RenderManager
 {
 public:
     void init();
-    void update(WorldFrameData* data, mat4 ortho);
+    void update(WorldsMessage* data, PlayerMessage* player, mat4 ortho);
     void deinit();
 
 private:
-    Program* program;
-    WorldRenderer* renderer;
-    SceneGroup* scene;
+    RenderProgram* program;
+    RenderWorld* renderer;
+    RenderGroup* scene;
 };

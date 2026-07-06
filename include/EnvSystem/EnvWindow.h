@@ -5,7 +5,7 @@
 
 class GLFWwindow;
 
-class Window {
+class EnvWindow {
 public:
     void init();
     void update();
@@ -16,7 +16,7 @@ public:
     void windowSetShouldClose();
 
     friend class PlayerController;
-    friend class EnvironmentManager;
+    friend class EnvManager;
 private:
     GLFWwindow* frame = nullptr;
 };

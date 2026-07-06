@@ -1,7 +1,8 @@
-#include "RenderSystem/SceneGroup.h"
+#include "RenderSystem/RenderGroup.h"
+
 #include "glad/glad.h"
 
-SceneGroup::SceneGroup(bool compressed)
+RenderGroup::RenderGroup(bool compressed)
 {
     this->compressed = compressed;
 
@@ -32,14 +33,14 @@ SceneGroup::SceneGroup(bool compressed)
     glBindVertexArray(0);
 }
 
-SceneGroup::~SceneGroup()
+RenderGroup::~RenderGroup()
 {
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
 }
 
-void SceneGroup::add(const float* data, std::size_t size)
+void RenderGroup::add(const float* data, std::size_t size)
 {
     if (!data || size == 0)
         return;
@@ -62,14 +63,14 @@ void SceneGroup::add(const float* data, std::size_t size)
     changed = true;
 }
 
-void SceneGroup::clear()
+void RenderGroup::clear()
 {
     elements.clear();
     indices.clear();
     changed = true;
 }
 
-void SceneGroup::render()
+void RenderGroup::render()
 {
     if (elements.empty())
         return;

@@ -1,22 +1,37 @@
 #include "WorldSystem/WorldGenerator.h"
-#include "WorldSystem/World.h"
+#include "WorldSystem/WorldDatabase.h"
 
-void WorldGenerator::generate(World* world)
+#include "Config.h"
+#include "World.h"
+
+void generateChunk(Chunk* chunk)
 {
-    int i = 0;
-    for (int x = 0; x < world->width; ++x)
-    {
-        Block block;
-        block.id = i % 2;
-        world->setBlock(x, world->height - 1, block);
-        i++;
-    }
+    for (int i = 0; i < CHUNKSIZE; i++)
+         for (int j = 0; j < CHUNKSIZE; j++)
+            chunk->blocks[i][j] = (abs(rand()) % 15);
+}
 
-    for (int x = 0; x < world->width; ++x)
-        for (int y = 0; y < world->height - 1; ++y)
+void WorldGenerator::generate(World* world, WorldDatabase* db)
+{
+    std::vector<PositionedChunk*> posChunks;
+
+    for (int x = 0; x < world->width; x++)
+        for (int y = 0; y < world->height; y++)
         {
-            Block block;
-            block.id = 1;
-            world->setBlock(x, y, block);
+            vec2 pos = vec2(x, y);
+            Chunk* chunk = new Chunk();
+            generateChunk(chunk);
+            posChunks.push_back(new PositionedChunk(chunk, pos));
         }
+        
+    db->writeChunks(world, posChunks);
+
+    for (PositionedChunk* posChunk : posChunks)
+    {
+        delete posChunk->chunk;
+        delete posChunk;
+    }
+    posChunks.clear();
+    
+            
 }
